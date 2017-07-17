@@ -3,10 +3,7 @@ package com.example.bunte.testapp2
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import okhttp3.Call
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
+import okhttp3.*
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
@@ -26,18 +23,26 @@ class MainActivity : AppCompatActivity() {
         var request: Request = Request.Builder().url(earl).build()
 
         var call: Call = george.newCall(request)
-        var resp: Response? =
+
+        call.enqueue(object : Callback{
+            override fun onFailure(call: Call?, e: IOException?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
                 try{
-                    call.execute()
+                    if(response is Response){
+                        if(response.isSuccessful()){
+                            Log.v(TAG, response.body()!!.string())
+                        }
+                    }
                 }catch(e: IOException){
                     Log.e(TAG, "Exception Caught: ", e)
-                    null
                 }
 
-        if(resp is Response){
-           if(resp.isSuccessful()){
-               Log.v(TAG, resp.body()!!.string())
-           }
-        }
+            }
+        })
+
     }
 }
