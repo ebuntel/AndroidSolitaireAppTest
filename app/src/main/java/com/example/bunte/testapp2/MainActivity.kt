@@ -14,20 +14,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var apikey = "cd8b30d9bf70a8a67954c0b084872104"
-        var lat = 37.8267
-        var long = -122.4233
+        val apikey = "cd8b30d9bf70a8a67954c0b084872104"
+        val lat = 37.8267
+        val long = -122.4233
         val earl = "https://api.darksky.net/forecast/$apikey/$lat,$long"
 
         val george = OkHttpClient()
-        var request: Request = Request.Builder().url(earl).build()
+        val request: Request = Request.Builder().url(earl).build()
 
-        var call: Call = george.newCall(request)
+        val call: Call = george.newCall(request)
 
         call.enqueue(object : Callback{
             override fun onFailure(call: Call?, e: IOException?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-
+                e?.printStackTrace()
             }
 
             override fun onResponse(call: Call?, response: Response?) {
@@ -35,6 +34,8 @@ class MainActivity : AppCompatActivity() {
                     if(response is Response){
                         if(response.isSuccessful()){
                             Log.v(TAG, response.body()!!.string())
+                        }else{
+                            alertUserAboutError()
                         }
                     }
                 }catch(e: IOException){
@@ -44,5 +45,10 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+    }
+
+    private fun alertUserAboutError() {
+        val dia = AlertDialogfragment()
+        dia.show(fragmentManager, "Error_Dialog")
     }
 }

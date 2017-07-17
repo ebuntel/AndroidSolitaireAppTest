@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">TestApp2</string>
+    <string name="Error_Title">Everything\'s going to shit</string>
+    <string name="Error_Msg">There was an error!</string>
+    <string name="Error_Pos_Button">Ok</string>
 </resources>
