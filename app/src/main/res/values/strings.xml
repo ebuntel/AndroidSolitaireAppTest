@@ -3,4 +3,7 @@
     <string name="Error_Title">Everything\'s going to shit</string>
     <string name="Error_Msg">There was an error!</string>
     <string name="Error_Pos_Button">Ok</string>
+    <string name="network_unavailable">Network is unavailable</string>
+    <string name="Connection_Error_Title">Bad Connection</string>
+    <string name="Connection_Error_Message">You\'re having connection problems!</string>
 </resources>
