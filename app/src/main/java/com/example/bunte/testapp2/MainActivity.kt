@@ -7,11 +7,14 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import okhttp3.*
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
     val TAG = "testapp2.MainActivity"
+    var mCurrWeatherData: CurrWeather = CurrWeather()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,13 +41,17 @@ class MainActivity : AppCompatActivity() {
                     try {
                         if (response is Response) {
                             if (response.isSuccessful()) {
-                                Log.v(TAG, response.body()!!.string())
+                                val resp = response.body()!!.string()
+                                mCurrWeatherData = getCurrentDetails(resp)
+                                Log.v(TAG, resp)
                             } else {
                                 alertUserAboutError("Response Error")
                             }
                         }
                     } catch(e: IOException) {
                         Log.e(TAG, "Exception Caught: ", e)
+                    } catch (j: JSONException){
+                        Log.e(TAG, "JSON Error", j)
                     }
 
                 }
@@ -53,6 +60,14 @@ class MainActivity : AppCompatActivity() {
             alertUserAboutError("Connection Error")
         }
 
+    }
+
+    @Throws(JSONException::class)
+    private fun  getCurrentDetails(resp: String): CurrWeather {
+        val forecast: JSONObject = JSONObject(resp)
+        val timezone = forecast.getString("timezone")
+        Log.i(TAG, "From JSON: $timezone")
+        return  CurrWeather()
     }
 
     private fun  networkIsAvailable(): Boolean {
