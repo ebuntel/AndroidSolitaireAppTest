@@ -10,6 +10,8 @@ import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,8 +23,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val apikey = "cd8b30d9bf70a8a67954c0b084872104"
-        val lat = 37.8267
-        val long = -122.4233
+        val lat = 42.3878
+        val long = -71.1143
         val earl = "https://api.darksky.net/forecast/$apikey/$lat,$long"
 
         if(networkIsAvailable()) {
@@ -67,7 +69,17 @@ class MainActivity : AppCompatActivity() {
         val forecast: JSONObject = JSONObject(resp)
         val timezone = forecast.getString("timezone")
         Log.i(TAG, "From JSON: $timezone")
-        return  CurrWeather()
+
+        val curr = forecast.getJSONObject("currently")
+        var weather = CurrWeather(mHumidity = curr.getDouble("humidity"),
+                mTime = curr.getLong("time"), mIcon = curr.getString("icon"),
+                mPrecipChance = curr.getDouble("precipProbability"),
+                mSummary = curr.getString("summary"), mTemp = curr.getDouble("temperature"),
+                mTimezone = timezone)
+
+        Log.d(TAG, getFormattedTime(weather))
+
+        return  weather
     }
 
     private fun  networkIsAvailable(): Boolean {
@@ -93,5 +105,30 @@ class MainActivity : AppCompatActivity() {
             }
             else -> print("jei")
         }
+    }
+
+    private fun getFormattedTime(weather: CurrWeather): String{
+        val formatter = SimpleDateFormat("h:mm a")
+        formatter.timeZone = TimeZone.getTimeZone(weather.mTimezone)
+        val dateTime = Date(weather.mTime * 1000)
+        return formatter.format(dateTime)
+    }
+
+    private fun getIconID(name: String): Int{
+        var id = 0
+        when(name){
+            "clear-day" -> id = R.drawable.clear_day
+            "clear-night" -> R.drawable.clear_night
+            "rain" -> R.drawable.rain
+            "snow" -> R.drawable.snow
+            "sleet" -> R.drawable.sleet
+            "wind" -> R.drawable.wind
+            "fog" -> R.drawable.fog
+            "cloudy" -> R.drawable.cloudy
+            "partly-cloudy-day" -> R.drawable.partly_cloudy
+            "partly-cloudy-night" -> R.drawable.cloudy_night
+            else -> print("NOPE")
+        }
+        return id
     }
 }
